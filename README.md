@@ -59,21 +59,48 @@ Exemple de lancement d’un test individuel (depuis la racine) :
 ./curiosity-test test_plouf.txt
 ```
 
-## Tests fournis
-Les tests ajoutés couvrent les cas principaux :
+## Liste complète des tests
+Ci‑dessous la liste complète des fichiers `test_*.txt` présents dans le dépôt avec une brève description de ce qu'ils vérifient :
 
-- `test_plouf.txt` → `terrain_plouf.txt` + `prog_plouf.prg` (événement attendu `P`)
-- `test_crash.txt` → `terrain_crash.txt` + `prog_crash.prg` (événement attendu `O`)
-- `test_sortie.txt` → `terrain_sortie.txt` + `prog_sortie.prg` (événement attendu `S`)
-- `test_arret.txt` → `terrain_arret.txt` + `prog_arret.prg` (événement attendu `F`)
-- `test_normal.txt` → `terrain_normal.txt` + `prog_normal.prg` (exemple pour `N`)
+- `test_plouf.txt` → `terrain_plouf.txt` + `prog_plouf.prg` : vérifie la détection de chute dans l'eau (événement `P`).
+- `test_crash.txt` → `terrain_crash.txt` + `prog_crash.prg` : vérifie la détection de collision avec un rocher (événement `O`).
+- `test_sortie.txt` → `terrain_sortie.txt` + `prog_sortie.prg` : vérifie la sortie du terrain (événement `S`).
+- `test_arret.txt` → `terrain_arret.txt` + `prog_arret.prg` : vérifie l'arrêt normal du programme (événement `F`) et la position/orientation finale.
+- `test_add.txt` → `terrain_add.txt` + `prog_add.txt` : teste l'opération `Add` et l'évaluation arithmétique dans le programme.
+- `test_sub.txt` → `terrain_sub.txt` + `prog_sub.txt` : teste l'opération `Sub` (ordre des opérandes) et son effet sur le flux du programme.
+- `test_mult.txt` → `terrain_mult.txt` + `prog_mult.txt` : teste l'opération `Mult` (multiplication).
+- `test_div.txt` → `terrain_div.txt` + `prog_div.txt` : teste l'opération `Div` (division) et la gestion d'erreurs associées.
+- `test_clone.txt` → `terrain_clone.txt` + `prog_clone.txt` : teste l'opération `Clone` (duplication du sommet de la pile).
+- `test_enchanger.txt` → `terrain_enchanger.txt` + `prog_enchanger.txt` : teste l'opération `Echange` (swap des deux éléments du sommet de la pile) et conséquences sur le comportement.
+- `test_rotation.txt` → `terrain_rotation.txt` + `prog_rotation.txt` : teste l'opération `Rotation` (décalage cyclique des n éléments de la pile). Ce test a été réglé pour provoquer une chute (`P`) afin de valider l'effet de la rotation sur la valeur de boucle.
+- `test_boucle.txt` → `terrain_boucle.txt` + `prog_boucle.txt` : teste l'opération `Boucle` (exécution répétée d'un bloc) et la gestion du compteur de boucle (résultat attendu `F`, avec position finale précisée dans le test).
+- `test_condbloc.txt` → `terrain_condbloc.txt` + `prog_condbloc.txt` : teste `CondExec` / exécution conditionnelle de blocs et la liaison des adresses de blocs (résultat attendu `F` avec position finale vérifiée).
+- `test_mesure.txt` → `terrain_mesure.txt` + `prog_mesure.prg` : teste l'instruction `Mesure` et la transmission du résultat sur la pile (cas particulier : paramètre `8` testé).
+- `test_ignore.txt` → `terrain_ignore.txt` + `prog_ignore.txt` : teste l'instruction `Ignore` (pop d'un élément) et son usage dans un programme.
 
+Remarque : pour chaque `test_*.txt` le format est :
 
-## Exécuter tous les tests `curiosity-test`
-Pour exécuter tous les fichiers `test_*.txt` utiliser `run_all_curiosity_tests.sh` 
+```
+<nom_fichier_terrain>
+<nom_fichier_programme>
+<max_steps>
+<evenement_attendu>  # N, F, S, O, ou P
+[<x> <y>]
+[<orientation>]
+```
+
+Exécution d'un test individuel (depuis la racine) :
+
+```bash
+./curiosity-test test_rotation.txt
+```
+
+Pour lancer l'ensemble des tests fournis sur curiosity:
+
 ```bash
 ./curiosity-test.sh
 ```
+
 ## Exo.4 — Test de tous les interprètes
 Pour exécuter tous les tests pour tous les interprètes, lancez le script:
 ```bash
@@ -102,9 +129,23 @@ interprete8.c : issue with cas Boucle dans if on a n>=0 et pas n>0 WYKONUJEMY BL
 interprete9.c : issue with cas Sub on a empiler(&(etat->stack), a-b): et pas b-a 
 
 
-
-
 ## Exo.5 — Tests de robustesse de l'interprète
+
+## Interprètes — résumé rapide (FR)
+Voici un résumé court et clair des fichiers d'interpréteur et de leur état :
+
+- `interprete0.c` — INCORRECT : bug dans `Clone` (duplique la valeur deux fois).
+- `interprete1.c` — OK : implémentation de référence.
+- `interprete2.c` — INCORRECT : `Echange` n'inverse pas l'ordre (push dans le mauvais ordre).
+- `interprete3.c` — INCORRECT : `Mesure` utilise `param % 8` (perd le cas `8`).
+- `interprete4.c` — INCORRECT : `CondExec` écrase l'adresse du bloc « sinon » (mauvaise affectation).
+- `interprete5.c` — INCORRECT : `DebutBloc` empile l'adresse de retour deux fois.
+- `interprete6.c` — INCORRECT : codes de retour `PLOUF` et `CRASH` inversés.
+- `interprete7.c` — OK : pas d'erreurs connues.
+- `interprete8.c` — INCORRECT : `Boucle` utilise `n >= 0` au lieu de `n > 0` (exécute le bloc une fois de trop pour `n = 0`).
+- `interprete9.c` — INCORRECT : `Sub` fait `a - b` au lieu de `b - a` (ordre des opérandes inversé).
+
+En résumé : `interprete1.c` et `interprete7.c` sont corrects ; les autres contiennent des bugs d'une ligne, faciles à corriger.
 
 ### 1) Erreurs détectées à la lecture du programme (fonction `lire_programme` dans `programme.c`)
 
