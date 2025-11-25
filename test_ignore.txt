@@ -1,6 +1,4 @@
-terrain_plouf.txt
+terrain_ignore.txt
 prog_ignore.txt
-2
-F
-3 2
-S
+30
+P

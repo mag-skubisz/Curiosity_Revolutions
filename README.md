@@ -97,7 +97,7 @@ interprete6.c : dans switch(res) pour les cas PLOUF et CRASH les retours sont in
 
 interprete7.c : OK
 
-interprete8.c : issue with cas Boucle dans if on a n>=0 et pas n>0
+interprete8.c : issue with cas Boucle dans if on a n>=0 et pas n>0 WYKONUJEMY BLOK JEDEN RAZ ZA DUŻO
 
 interprete9.c : issue with cas Sub on a empiler(&(etat->stack), a-b): et pas b-a 
 

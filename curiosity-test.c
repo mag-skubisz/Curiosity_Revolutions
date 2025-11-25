@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
 
   /* 3) max steps */
   if (fscanf(f, " %d", &nb_de_pas) != 1) { fprintf(stderr, "Nombre de pas n'est pas correcte\n"); return 3; }
-  printf("Nombre de pas: %d\n", nb_de_pas);
+  printf("Nombre de pas dans la ficher: %d\n", nb_de_pas);
 
   /* 4) expected event - read a single non-whitespace char */
   if (fscanf(f, " %c", &e) != 1) { fprintf(stderr, "EOF e\n"); return 3; }
@@ -121,10 +121,11 @@ int main(int argc, char **argv) {
 
   /* SI N OU F ON LIT X Y O */
   if (e == 'N' || e == 'F') {
-    if (fscanf(f, " %d %d", &x, &y) != 2) { fprintf(stderr, "il nous manque x et y\n"); return 3; }
-    /* read orientation as a character and map to enum */
-    char o_ch = '\0';
-    if (fscanf(f, " %c", &o_ch) != 1) { fprintf(stderr, "il nous manque orientation \n"); return 3; }
+   if (fscanf(f, " %d %d", &x, &y) != 2) { fprintf(stderr, "il nous manque x et y\n"); return 3; }
+   /* read orientation as a character and map to enum */
+   char o_ch = '\0';
+   if (fscanf(f, " %c", &o_ch) != 1) { fprintf(stderr, "il nous manque orientation \n"); return 3; }
+
     switch (o_ch) {
     case 'N': o = Nord; break;
     case 'E': o = Est; break;
@@ -174,7 +175,7 @@ int main(int argc, char **argv) {
   //VERIFICATION DES RESULTATS
   int ok = 1;
   // nombre de pas
-  if (nb_de_pas1 != nb_de_pas) {
+  if (nb_de_pas1 > nb_de_pas) {
     printf("TEST %s : FAILED (nombre de pas maximum dépassé)\n", argv[1]);
     ok = 0;
   }
@@ -185,11 +186,11 @@ int main(int argc, char **argv) {
        (e == 'S' && res != SORTIE_ROBOT) ||
        (e == 'P' && res != PLOUF_ROBOT) ) {
         printf("TEST %s : FAILED (mauvais evenement final)\n", argv[1]);
-        ok =0; 
+        ok = 0; 
     }
   // x,y
   if (e == 'N' || e == 'F') {
-      if (x1 == x && y1 == y) {
+      if (x1 != x || y1 != y) {
         printf("TEST %s : FAILED (mauvaise position finale)\n", argv[1]);
         ok = 0;
       }
