@@ -2,7 +2,7 @@
 
 BIN="../curiosity-obs"
 
-# Sprawdzenie, czy program istnieje i jest wykonywalny
+# on verifie si le programme existe et est executable
 [ -x "$BIN" ] || { echo "error"; exit 1; }
 
 run() {
