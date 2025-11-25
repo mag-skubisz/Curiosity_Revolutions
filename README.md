@@ -102,37 +102,12 @@ Pour lancer l'ensemble des tests fournis sur curiosity:
 ```
 
 ## Exo.4 — Test de tous les interprètes
+
 Pour exécuter tous les tests pour tous les interprètes, lancez le script:
 ```bash
 run_all_curiosity_tests.sh.
 ```
-et avec utilisation de diff interprete.c interprete?.c on vois que 
-
-interprete0.c : issue with cas Clone on a deux fois: empiler(&(etat->stack), a) donc on clone a deux fois
-
-interprete1.c : OK
-
-interprete2.c : issue with cas Echange on a empiler(&(etat->stack), b) et apres empiler(&(etat->stack), a) donc on ne change pas l'ordre d'elements
-
-interprete3.c :  issue with cas Mesure on a mes = mesure_envt(envt, param % 8); et pas mes = mesure_envt(envt, param);
-
-interprete4.c : issue with cas CondExec on a apres addr_v = sommet(&(etat->stack)); coś takiego addr_f = addr_v;
-
-interprete5.c : issue with cas DebutBlock on a dex fois empiler(&(etat->stack), etat->pc + 1);
-
-interprete6.c : dans switch(res) pour les cas PLOUF et CRASH les retours sont inverses
-
-interprete7.c : OK
-
-interprete8.c : issue with cas Boucle dans if on a n>=0 et pas n>0 WYKONUJEMY BLOK JEDEN RAZ ZA DUŻO
-
-interprete9.c : issue with cas Sub on a empiler(&(etat->stack), a-b): et pas b-a 
-
-
-## Exo.5 — Tests de robustesse de l'interprète
-
-## Interprètes — résumé rapide (FR)
-Voici un résumé court et clair des fichiers d'interpréteur et de leur état :
+## Interprètes — résumé
 
 - `interprete0.c` — INCORRECT : bug dans `Clone` (duplique la valeur deux fois).
 - `interprete1.c` — OK : implémentation de référence.
@@ -146,6 +121,8 @@ Voici un résumé court et clair des fichiers d'interpréteur et de leur état :
 - `interprete9.c` — INCORRECT : `Sub` fait `a - b` au lieu de `b - a` (ordre des opérandes inversé).
 
 En résumé : `interprete1.c` et `interprete7.c` sont corrects ; les autres contiennent des bugs d'une ligne, faciles à corriger.
+
+## Exo.5 — Tests de robustesse de l'interprète
 
 ### 1) Erreurs détectées à la lecture du programme (fonction `lire_programme` dans `programme.c`)
 
@@ -180,7 +157,7 @@ Exemple :
 Dans `type_pile.h`, la pile a une capacité fixe définie par `#define TAILLE_MAX 100`.
 Toutefois, l'implémentation actuelle ne vérifie pas cette borne :
 
-Donc il est possible d'écrire des programmes incorrects (par exemple un fichier contenant 200 `1`) qui seront lus et interprétés sans que le paquetage ne retourne l'une des erreurs prévues : le comportement devient indéfini (corruption mémoire, plantage ou résultats erratiques) au lieu d'une erreur contrôlée.
+Donc il est possible d'écrire des programmes incorrects (par exemple un fichier contenant 200 `1`) qui seront lus et interprétés sans que le paquetage ne retourne l'une des erreurs prévues : le comportement devient indéfini au lieu d'une erreur contrôlée.
 
 # TP7 
 
@@ -300,31 +277,40 @@ Moyenne pas pour sorties : 66.60
 
 # TP8
 
-## Exo.1 / Exo.2 / Exo.3
+## Exo.1–3
+Ajout du paquetage `observateur` (`observateur.h` / `observateur.c`) et adaptation de
+`environnement`. Implémentation de l'outil `curiosity-obs`.
 
-implementation de paquetage observateur: observateur.h observateur.c et motdyfication du paquetage environement
-implementation of curiosity-obs.c
-
-## Exo.4
-
-Tester le programme curiosity-obs sur différents terrains et programmes. En particulier, écrire des terrains et programmes pour les catégories d'exemples vus en CTD :
-
-    des programmes-robots corrects, acceptés par l'observateur ;
-    des programmes-robots incorrects, rejetés par l'observateur ;
-    des programmes-robots corrects, rejetés par l'observateur ;
-    des programmes-robots incorrects, acceptés par l'observateur.
-
-## Exo.5
-
-
-## Structure du programe (rapide)
-```mermaid
-graph
-    environnement --> curiosity
-    interprete --> curiosity
-    programme --> curiosity
-    type_pile --> programme
-    type_pile --> interprete
-    environnement --> interprete
-    programme --> interprete
+Usage :
+```bash
+curiosity-obs <fichier_terrain> <fichier_programme>
 ```
+Affiche si la propriété surveillée est respectée pendant l'exécution.
+
+## Exo.4 — jeux de tests
+Jeu de tests couvrant quatre catégories :
+- programmes corrects acceptés par l’observateur ;
+- programmes incorrects rejetés par l’observateur ;
+- programmes corrects mais rejetés (fausse alarme) ;
+- programmes incorrects mais acceptés (limites de l’observateur).
+
+Les tests et le script principal sont dans `test_curiosity_obs` (`tests_curiosity_obs.sh`).
+
+## Exo.5 — Observateur « spin »
+Ajout de `observateur_spin.h/.c` et d’un champ `EtatSpin etat_obs_spin` dans
+`Environnement`. Cet observateur détecte les rotations excessives : il rejette toute
+série de 4 rotations consécutives (commandes `G` ou `D`).
+
+Tests fournis (exemples) :
+1) programme correct, accepté — `prog_spin_accept_ok.prg`
+2) programme violant `spin`, rejeté — `prog_spin_reject_incorrect.prg`
+3) programme logiquement acceptable mais rejeté par la règle `spin` (4 rotations) — `prog_spin_correct_reject.prg`
+4) programme incorrect (crash) mais sans violation `spin` — `prog_spin_incorrect_accept.prg`
+
+Pour exécuter les tests spin (depuis `test_curiosity_obs`) :
+```bash
+./tests_spin.sh
+```
+
+En bref : `curiosity-obs` exécute un couple (terrain, programme) et vérifie
+dynamiquement des propriétés via des observateurs (dont `observateur_spin`).

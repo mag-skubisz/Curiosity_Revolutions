@@ -4,6 +4,7 @@
 #include "programme.h"
 #include "interprete.h"
 #include "observateur.h"
+#include "observateur_spin.h"
 
 // pour n'avoir pas un boucle infini ou trop long
 #define STEP_LIMIT 1000000
@@ -87,33 +88,11 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Usage: %s <fichier_terrain> <fichier_programme>\n", argv[0]);
     return 1;
   }
-
-  // OUVERTURE DU FICHIER DE TERRAIN
-  FILE *f1 = fopen(argv[1], "r");
-  if (!f1) {
-    perror("Erreur ouverture fichier de TERRAIN");
-    return 2;
-  }
-
-  FILE *f2 = fopen(argv[2], "r");
-  if (!f2) {
-    perror("Erreur ouverture fichier de PROGRAMME");
-    return 2;
-  }
-
-  char terrain[512] = {0};
-  char programme[512] = {0};
-
-    /* 1) terrain */
-  if (fscanf(f1, " %511s", terrain) != 1) { fprintf(stderr, "EOF terrain\n"); return 3; }
+  
+  char *terrain = argv[1];
+  char *programme = argv[2];
   printf("Terrain: '%s'\n", terrain);
-
-  /* 2) programme */
-  if (fscanf(f2, " %511s", programme) != 1) { fprintf(stderr, "EOF programme\n"); return 3; }
   printf("Programme: '%s'\n", programme);
-
-  fclose(f1);
-  fclose(f2);
 
   /* Initialisation de l'environnement */
   Environnement envt;
@@ -130,24 +109,32 @@ int main(int argc, char **argv) {
   gestion_erreur_programme(errp);
 
   int steps = 0;
-  int violation_detected = 0;
+  int violation_detected_am = 0;
+  int violation_detected_spin = 0;
 
   init_etat(&etat);
   do {
     res = exec_pas(&prog, &envt, &etat);
     /* vérifier l'état de l'observateur stocké dans l'environnement */
-    if (!est_accepte_obs(envt.etat_obs)) {
-      printf("OBSERVATEUR: violation détectée (A sans M)\n");
-      violation_detected = 1;
-      break;
+    if (!est_accepte_obs(envt.etat_obs) && !violation_detected_am) {
+      printf("OBSERVATEUR: INCORRECT -> violation détectée (A sans M)\n");
+      violation_detected_am++;
+      //break;
+    }
+    if (!est_accepte_obs_spin(envt.etat_obs_spin) && !violation_detected_spin) {
+      printf("OBSERVATEUR_SPIN: INCORRECT -> violation détectée (trop de rotations consécutives)\n");
+      violation_detected_spin++;
+      //break;
     }
     steps++;
   } while (res == OK_ROBOT && steps < STEP_LIMIT);
 
   //afficher le raison d'arreter le programme
-  if (!violation_detected) {
-    printf("OBSERVATEUR: n'est pas détectée (A sans M)\n");
+  if (!violation_detected_am) {
+    printf("OBSERVATEUR: CORRECT -> n'est pas détectée (A sans M)\n");
   }
-
+  if (!violation_detected_spin) {
+    printf("OBSERVATEUR_SPIN: CORRECT -> n'est pas détectée (trop de rotations consécutives)\n");
+  }
   return 0;
 }

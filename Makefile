@@ -60,26 +60,28 @@ robot_terrain: robot_terrain.o terrain.o robot.o
 	$(CC) $^ -o $@
 
 curiosity: curiosity.o environnement.o programme.o interprete.o \
-    robot.o terrain.o type_pile.o observateur.o
+	robot.o terrain.o type_pile.o observateur.o observateur_spin.o
 	$(CC) $^ -o $@
 
 curiosity-test: curiosity-test.o environnement.o programme.o interprete.o \
-    robot.o terrain.o type_pile.o observateur.o
+	robot.o terrain.o type_pile.o observateur.o observateur_spin.o
 	$(CC) $^ -o $@
 
+
 curiosity-test%: curiosity-test.o environnement.o programme.o interprete%.o \
-    robot.o terrain.o type_pile.o observateur.o
+	robot.o terrain.o type_pile.o observateur.o observateur_spin.o
 	$(CC) $^ -o $@
 
 test_generation_terrains: test_generation_terrains.o generation_terrains.o terrain.o
 	$(CC) $^ -o $@
 
+
 curiosity_perf: curiosity_perf.o environnement.o programme.o interprete.o \
-    robot.o terrain.o type_pile.o generation_terrains.o observateur.o
+	robot.o terrain.o type_pile.o generation_terrains.o observateur.o observateur_spin.o
 	$(CC) $^ -o $@
 
 curiosity-obs: curiosity-obs.o environnement.o programme.o interprete.o \
-    robot.o terrain.o type_pile.o observateur.o
+    robot.o terrain.o type_pile.o observateur.o observateur_spin.o
 	$(CC) $^ -o $@
 
 clean:

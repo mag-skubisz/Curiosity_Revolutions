@@ -1,6 +1,7 @@
 
 #include "environnement.h"
-#include "observateur.h" //TODO:TP8
+#include "observateur.h"
+#include "observateur_spin.h"
 
 #include <stdio.h>
 
@@ -17,8 +18,9 @@ erreur_terrain initialise_environnement(Environnement *envt,
 
   f = fopen(fichier_terrain, "r");
 
-  /* initialiser l'état de l'observateur pour cette nouvelle exécution/environnement */
-  envt->etat_obs = initiale_obs(); //TODO:TP8
+  /* initialiser l'état des observateurs pour cette nouvelle exécution/environnement */
+  envt->etat_obs = initiale_obs(); // observateur A doit être précédé de M
+  envt->etat_obs_spin = initiale_obs_spin(); // observateur rotations consécutives
 
   errt = lire_terrain(f, &(envt->t), &x, &y);
 
@@ -32,8 +34,9 @@ erreur_terrain initialise_environnement(Environnement *envt,
 }
 
 resultat_deplacement avancer_envt(Environnement *envt) {
-  /* notifier l'observateur : tentative d'avancer */
-  envt->etat_obs = transition_obs(envt->etat_obs, A); //TODO:TP8
+  /* notifier les observateurs : tentative d'avancer */
+  envt->etat_obs = transition_obs(envt->etat_obs, A);
+  envt->etat_obs_spin = transition_obs_spin(envt->etat_obs_spin, ACT_A);
   /*if (!est_accepte_obs(obs_state)) {
     fprintf(stderr, "OBSERVATEUR: violation detectee (A sans M)\n");
   }*/
@@ -65,13 +68,17 @@ resultat_deplacement avancer_envt(Environnement *envt) {
 }
 
 /* Tourner le robot à gauche */
-void gauche_envt(Environnement *envt) { tourner_a_gauche(&(envt->r)); 
-envt->etat_obs = transition_obs(envt->etat_obs, G); //TODO:TP8 
+void gauche_envt(Environnement *envt) { 
+  tourner_a_gauche(&(envt->r)); 
+  envt->etat_obs = transition_obs(envt->etat_obs, G);
+  envt->etat_obs_spin = transition_obs_spin(envt->etat_obs_spin, ACT_G);
 }
 
 /* Tourner le robot à droite */
-void droite_envt(Environnement *envt) { tourner_a_droite(&(envt->r)); 
-envt->etat_obs = transition_obs(envt->etat_obs, D); //TODO:TP8 
+void droite_envt(Environnement *envt) { 
+  tourner_a_droite(&(envt->r)); 
+  envt->etat_obs = transition_obs(envt->etat_obs, D);
+  envt->etat_obs_spin = transition_obs_spin(envt->etat_obs_spin, ACT_D);
 }
 
 /* Effectuer une mesure
@@ -92,8 +99,9 @@ envt->etat_obs = transition_obs(envt->etat_obs, D); //TODO:TP8
      3 erreur (valeur du paramètre incorrect)
  */
 int mesure_envt(Environnement *envt, int d) {
-  /* notifier l'observateur : mesure effectuée */
-  envt->etat_obs = transition_obs(envt->etat_obs, M); //TODO:TP8
+  /* notifier les observateurs : mesure effectuée */
+  envt->etat_obs = transition_obs(envt->etat_obs, M);
+  envt->etat_obs_spin = transition_obs_spin(envt->etat_obs_spin, ACT_M);
 
   int x, y;   // Position courante du robot
   int dx, dy; // Direction du robot

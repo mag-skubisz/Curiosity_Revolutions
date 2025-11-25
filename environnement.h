@@ -4,13 +4,15 @@
 #include "robot.h"
 #include "terrain.h"
 #include "observateur.h" //TODO: TP8
+#include "observateur_spin.h"
 
 /* Environnement : terrain + robot */
 
 typedef struct {
   Robot r;
   Terrain t;
-  Etat etat_obs; //TODO: TP8
+  Etat etat_obs; // état de l'observateur original (A doit être précédé de M)
+  EtatSpin etat_obs_spin; // état du second observateur (compte rotations)
 } Environnement;
 
 /* Initialise l'environnement envt :
