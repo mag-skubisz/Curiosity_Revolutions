@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "environnement.h": "c",
+        "observateur.h": "c"
+    }
+}
