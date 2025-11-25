@@ -43,16 +43,16 @@ int main(int argc, char **argv) {
 
   afficher_infos_robot(&r);
 
-  printf("Entrer une action ([a]vancer, [g]auche, [d]roite, [f]in : ");
+  printf("Entrer une action ([A]vancer, [G]auche, [D]roite, [F]in : ");
   scanf(" %c", &c);
-  while (c != 'f') {
+  while (c != 'F') {
 
     /* Corps de la boucle : afficher infos, exécuter commande */
-    if (c == 'a') {
+    if (c == 'A') {
       avancer(&r);
-    } else if (c == 'g') {
+    } else if (c == 'G') {
       tourner_a_gauche(&r);
-    } else if (c == 'd') {
+    } else if (c == 'D') {
       tourner_a_droite(&r);
     } else {
       printf("Commande inconnue : %c\n", c);
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 
     afficher_infos_robot(&r);
 
-    printf("Entrer une action ([a]vancer, [g]auche, [d]roite, [f]in) : ");
+    printf("Entrer une action ([A]vancer, [G]auche, [D]roite, [F]in) : ");
     scanf(" %c", &c);
   }
 

@@ -22,7 +22,43 @@ int main(int argc, char **argv) {
   fclose(f);
 
   if (err != OK) {
-    fprintf(stderr, "Erreur lecture fichier '%s'\n", argv[1]);
+    switch (err) {
+    case ERREUR_FICHIER:
+      fprintf(stderr, "Erreur : fichier invalide ou impossible à lire '%s'\n",
+              argv[1]);
+      break;
+    case ERREUR_LECTURE_LARGEUR:
+      fprintf(stderr, "Erreur : lecture de la largeur du terrain échouée\n");
+      break;
+    case ERREUR_LECTURE_HAUTEUR:
+      fprintf(stderr, "Erreur : lecture de la hauteur du terrain échouée\n");
+      break;
+    case ERREUR_LARGEUR_INCORRECTE:
+      fprintf(stderr, "Erreur : largeur incorrecte (hors limites)\n");
+      break;
+    case ERREUR_HAUTEUR_INCORRECTE:
+      fprintf(stderr, "Erreur : hauteur incorrecte (hors limites)\n");
+      break;
+    case ERREUR_CARACTERE_INCORRECT:
+      fprintf(stderr,
+              "Erreur : caractère incorrect trouvé dans le fichier du terrain\n");
+      break;
+    case ERREUR_LIGNE_TROP_LONGUE:
+      fprintf(stderr, "Erreur : une ligne du terrain est trop longue\n");
+      break;
+    case ERREUR_LIGNE_TROP_COURTE:
+      fprintf(stderr, "Erreur : une ligne du terrain est trop courte\n");
+      break;
+    case ERREUR_LIGNES_MANQUANTES:
+      fprintf(stderr, "Erreur : lignes manquantes dans le fichier du terrain\n");
+      break;
+    case ERREUR_POSITION_ROBOT_MANQUANTE:
+      fprintf(stderr,
+              "Erreur : position initiale du robot manquante dans le terrain\n");
+      break;
+    default:
+      fprintf(stderr, "Erreur inconnue lors de la lecture du terrain\n");
+    }
     return 1;
   }
 

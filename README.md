@@ -6,15 +6,6 @@ Les fichiers sources (modules en C) incluent : `environnement`, `interprete`, `p
 
 # TP5
 
-!! FEEDBACK TP5
-
-Exo 2 : attention, il fallait afficher les erreurs correspondantes
-        avec un switch case dans test_terrain.c
-Exo 3 : attention à la lisibilité du code dans la fonction avancer(), il faut
-        éviter de faire plusieurs instructions par ligne
-Exo 4 : votre test au milieu de la fonction robot_peut_avancer() est inutile
-        car déjà fait par la fonction est_case_libre() que vous appelez juste après
-
 ## Exo.1 et 2
 Écriture et test de `terrain.c` et `test_terrain.c`.
 

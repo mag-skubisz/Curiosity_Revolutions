@@ -85,7 +85,8 @@ int robot_peut_avancer(Terrain *t, Robot *r) {
   int nx, ny;
   position_devant(r, &nx, &ny);
 
-  if (nx < 0 || ny < 0 || nx >= t->largeur || ny >= t->hauteur) return 0; // FALSE
+  // on a cela deja dans est_case_libre()
+  //if (nx < 0 || ny < 0 || nx >= t->largeur || ny >= t->hauteur) return 0; // FALSE
 
   /* sinon : peut avancer si la case devant est libre */
   return est_case_libre(t, nx, ny);
